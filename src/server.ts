@@ -1,18 +1,6 @@
-/** @type {import("fastify")} */
+import { app } from "./app";
+import { envs } from "./lib/envs";
 
-import { Server } from "socket.io";
-
-interface ServerToClientEvents {
-    chat: (data: string) => void;
-    online: (data: string) => void;
-}
-
-interface ClientToServerEvents {
-    chat: (data: string) => void;
-}
-
-declare module "fastify" {
-    interface FastifyInstance {
-        io: Server<ServerToClientEvents, ClientToServerEvents>;
-    }
-}
+app.listen({ port: envs.PORT }).then(() => {
+    console.info("Server started!");
+});
