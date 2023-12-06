@@ -16,13 +16,10 @@ export async function roomsRoute(app: FastifyInstance) {
         const { roomId } = request.params as { roomId: string };
         const room = await prisma.room.findUnique({ where: { id: roomId } });
         if (!room) reply.status(404).send();
-
         reply.send({ room });
     });
-
     app.get("/:roomId/messages/recent", async (request, reply) => {
         const { roomId } = request.params as { roomId: string };
-
         const messages = await prisma.message.findMany({
             where: { room_id: roomId },
             include: {
@@ -40,6 +37,9 @@ export async function roomsRoute(app: FastifyInstance) {
                 },
             },
             take: -10,
+            orderBy: {
+                created_at: "asc",
+            },
         });
 
         const formattedMessages = messages.map((message) => {
@@ -51,7 +51,6 @@ export async function roomsRoute(app: FastifyInstance) {
                 room: message.room,
             };
         });
-
         reply.send({ messages: formattedMessages });
     });
 }
